@@ -32,6 +32,16 @@ The Compose service binds to loopback by default and keeps its data in a named v
 | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | ![Now Playing with illustrated cover, playback progress and controls](docs/screenshots/now-playing.png) | ![Bedtime picker with Stop Sleep Music beside the volume slider](docs/screenshots/sleep-music.png) | ![Parent view of approved music and controls](docs/screenshots/parent-approvals.png) |
 
+## The ThinkSmart View jukebox
+
+I repurposed a **Lenovo ThinkSmart View (CD-18781Y)** as a dedicated countertop jukebox. Its 8-inch touchscreen runs at 1280 × 800, and the child interface has a compact landscape layout for the display. [Lenovo specifications](https://psref.lenovo.com/Product/ThinkSmart_View)
+
+My unit runs an unofficial Android 8.1 build of LineageOS with Fully Kiosk Browser PLUS. Fully is the default launcher and opens the paired `/child` page when the display powers on. I verified that the unit boots straight back into the jukebox after a power cycle.
+
+Fully's JavaScript bridge lets the app use the physical volume buttons, set the backlight during daytime use, and follow the parent’s bedtime screen schedule. I left Android media volume keys enabled and let Kids Music Box manage screen timing. [Fully Kiosk JavaScript interface](https://www.fully-kiosk.com/docs/en/api/javascript)
+
+You can also pair a regular tablet browser. The ThinkSmart View serves as the display and speaker while the hub and Music Assistant run separately.
+
 ## Run it with your music
 
 See [Music Assistant setup](docs/music-assistant.md), [architecture](docs/architecture.md), [Home Assistant automation](docs/home-assistant.md), and [development and testing](docs/development.md).
