@@ -1,0 +1,46 @@
+# VM201's qemu64 CPU lacks SSE4.2. Build the image library and binding for
+# baseline x86-64; do not change the VM's CPU or reboot unrelated services.
+FROM node:22-bookworm-slim AS native
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential python3 meson ninja-build pkg-config curl ca-certificates \
+    libglib2.0-dev libexpat1-dev libjpeg62-turbo-dev libpng-dev libwebp-dev \
+    libexif-dev liblcms2-dev libtiff-dev librsvg2-dev \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /build
+RUN curl -fsSL https://github.com/libvips/libvips/releases/download/v8.18.7/vips-8.18.7.tar.xz -o vips.tar.xz \
+    && echo '5baaead3b0bb20ffdb9e9ff09aa9fda08620923df77b63b436654cb5e0b3bf94  vips.tar.xz' | sha256sum -c - \
+    && tar xf vips.tar.xz \
+    && CFLAGS='-O2 -march=x86-64 -mtune=generic' CXXFLAGS='-O2 -march=x86-64 -mtune=generic' \
+       meson setup vips-8.18.7/build vips-8.18.7 --prefix=/usr/local --libdir=lib \
+       --buildtype=release --auto-features=disabled -Dcplusplus=true \
+       -Djpeg=enabled -Dpng=enabled -Dwebp=enabled -Dexif=enabled \
+       -Dlcms=enabled -Dtiff=enabled -Drsvg=enabled -Dhighway=disabled -Dorc=disabled \
+       -Dexamples=false -Dintrospection=disabled \
+    && meson compile -C vips-8.18.7/build -j 2 \
+    && meson install -C vips-8.18.7/build && ldconfig
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci && npm install --no-save node-addon-api@8.9.2 node-gyp@12.4.0 \
+    && CFLAGS='-O2 -march=x86-64 -mtune=generic' CXXFLAGS='-O2 -march=x86-64 -mtune=generic' \
+       SHARP_FORCE_GLOBAL_LIBVIPS=1 npm explore sharp -- npm run build
+COPY . .
+RUN npm run build && npm prune --omit=dev
+
+FROM node:22-bookworm-slim
+ENV NODE_ENV=production PORT=3000 DATABASE_PATH=/app/data/hub.sqlite
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libglib2.0-0 libexpat1 libjpeg62-turbo libpng16-16 libwebp7 libwebpmux3 \
+    libwebpdemux2 libexif12 liblcms2-2 libtiff6 librsvg2-2 \
+    && rm -rf /var/lib/apt/lists/*
+COPY --from=native /usr/local/lib/libvips* /usr/local/lib/
+RUN ldconfig && mkdir -p /app/data && chown node:node /app/data
+WORKDIR /app
+COPY --from=native --chown=node:node /app/dist ./dist
+COPY --from=native --chown=node:node /app/node_modules ./node_modules
+COPY --from=native --chown=node:node /app/package.json ./package.json
+COPY --from=native --chown=node:node /app/public ./public
+COPY --from=native --chown=node:node /app/migrations ./migrations
+USER node
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 CMD node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["node", "--experimental-sqlite", "dist/server/server/index.js"]

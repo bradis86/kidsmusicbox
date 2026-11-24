@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Music Hub device check</title>
+  </head>
+  <body>
+    <h1>Music Hub device check</h1>
+    <p>
+      This checks this browser's actual HTTPS and recording support. No audio
+      leaves this page.
+    </p>
+    <pre id="report"></pre>
+    <button id="record">Test microphone for 2 seconds</button>
+    <p id="result"></p>
+    <audio id="preview" controls></audio>
+    <p>
+      <a href="/child">Open jukebox</a> · <a href="/admin">Parent controls</a>
+    </p>
+    <script src="/device-check.js"></script>
+  </body>
+</html>

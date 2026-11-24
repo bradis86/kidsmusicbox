@@ -1,0 +1,36 @@
+services:
+  kids-music-hub:
+    build: .
+    ports:
+      - '${BIND_ADDRESS:-127.0.0.1}:${HUB_PORT:-3210}:3000'
+    environment:
+      MUSIC_BACKEND: ${MUSIC_BACKEND:-mock}
+      DATABASE_PATH: /app/data/hub.sqlite
+      PARENT_SETUP_CODE: ${PARENT_SETUP_CODE:-}
+      PARENT_PASSWORD: ${PARENT_PASSWORD:-}
+      MA_URL: ${MA_URL:-}
+      MA_TOKEN: ${MA_TOKEN:-}
+      MA_EXPECTED_SCHEMA: ${MA_EXPECTED_SCHEMA:-}
+      MA_PLAYER_ID: ${MA_PLAYER_ID:-}
+      MA_COMMAND_TIMEOUT_MS: ${MA_COMMAND_TIMEOUT_MS:-30000}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      AUTOMATION_TOKEN: ${AUTOMATION_TOKEN:-}
+    volumes:
+      - hub-data:/app/data
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: '5m'
+        max-file: '2'
+volumes:
+  hub-data:

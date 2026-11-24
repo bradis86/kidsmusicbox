@@ -1,0 +1,71 @@
+.music-visualizer {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #0d0d20;
+}
+
+.music-visualizer .visualizer-artwork,
+.music-visualizer canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.music-visualizer .visualizer-artwork {
+  object-fit: cover;
+  object-position: center 46%;
+  opacity: 0.37;
+}
+
+.music-visualizer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, #10102022, #0c0c1ad9);
+  pointer-events: none;
+}
+
+.music-visualizer canvas {
+  z-index: 2;
+  object-fit: cover;
+}
+
+.music-visualizer[data-style='orbit'] canvas {
+  object-fit: contain;
+}
+
+.visualizer-controls {
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex: 1;
+  gap: 12px;
+  padding: 12px clamp(12px, 4vw, 42px);
+  pointer-events: none;
+}
+
+.visualizer-controls .back-library,
+.visualizer-controls select {
+  min-height: 44px;
+  margin: 0;
+  padding: 7px 12px;
+  border: 1px solid #514765;
+  border-radius: 12px;
+  color: #f1eaf9;
+  background: #232036;
+  pointer-events: auto;
+}
+
+.visualizer-controls select {
+  min-width: 0;
+  max-width: 50%;
+  font: inherit;
+}

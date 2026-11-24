@@ -1,0 +1,23 @@
+# Optional private speech backend. The key and public CA stay outside the source tree.
+services:
+  kids-music-hub:
+    environment:
+      VOICE_ENABLED: 'true'
+      VOICE_STT_URL: ${VOICE_STT_URL:?Set the private speech backend URL}
+      VOICE_STT_API_KEY_FILE: /run/secrets/voice-stt-key
+      VOICE_STT_CA_FILE: /run/certs/voice-stt-ca.crt
+      VOICE_STT_TIMEOUT_MS: ${VOICE_STT_TIMEOUT_MS:-35000}
+      VOICE_MAX_RECORDING_SECONDS: ${VOICE_MAX_RECORDING_SECONDS:-10}
+    volumes:
+      - type: bind
+        source: ${VOICE_STT_API_KEY_FILE:?Set the private API key file on this host}
+        target: /run/secrets/voice-stt-key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${VOICE_STT_CA_FILE:?Set the public CA file on this host}
+        target: /run/certs/voice-stt-ca.crt
+        read_only: true
+        bind:
+          create_host_path: false
