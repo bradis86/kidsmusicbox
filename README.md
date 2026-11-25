@@ -36,6 +36,12 @@ The Compose service binds to loopback by default and keeps its data in a named v
 
 I repurposed a **Lenovo ThinkSmart View (CD-18781Y)** as a dedicated countertop jukebox. Its 8-inch touchscreen runs at 1280 × 800, and the child interface has a compact landscape layout for the display. [Lenovo specifications](https://psref.lenovo.com/Product/ThinkSmart_View)
 
+| ThinkSmart View on the desk                                                                             | A closer look at the touchscreen                                                                        |
+| ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| ![Lenovo ThinkSmart View with the demo Now Playing screen](docs/photos/thinksmart-view-now-playing.jpg) | ![Close-up of the ThinkSmart View with the demo child library](docs/photos/thinksmart-view-library.jpg) |
+
+_Device photos with the public demo screens composited onto the display._
+
 My unit runs an unofficial Android 8.1 build of LineageOS with Fully Kiosk Browser PLUS. Fully is the default launcher and opens the paired `/child` page when the display powers on. I verified that the unit boots straight back into the jukebox after a power cycle.
 
 Fully's JavaScript bridge lets the app use the physical volume buttons, set the backlight during daytime use, and follow the parent’s bedtime screen schedule. I left Android media volume keys enabled and let Kids Music Box manage screen timing. [Fully Kiosk JavaScript interface](https://www.fully-kiosk.com/docs/en/api/javascript)
